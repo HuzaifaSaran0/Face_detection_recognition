@@ -1,0 +1,31 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment (customize as per your venv folder name)
+venv/
+venv310/
+.env
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
+static_root/
+local_settings.py
+
+# VS Code settings (optional)
+.vscode/
+
+# MacOS and system files
+.DS_Store
+Thumbs.db
+
+# Migrations (optional if you regenerate them)
+**/migrations/*.py
+!**/migrations/__init__.py

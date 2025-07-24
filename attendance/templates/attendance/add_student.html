@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-container {
+            padding: 40px 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            position: relative;
+        }
+
+        .form-group input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .video-section {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            border: 2px dashed #cbd5e0;
+            transition: all 0.3s ease;
+        }
+
+        .video-section.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .video-title {
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        #video {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+        }
+
+        .capture-btn {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+            margin-bottom: 20px;
+        }
+
+        .capture-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
+        }
+
+        .capture-btn:active {
+            transform: translateY(0);
+        }
+
+        #preview {
+            display: none;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #48bb78;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            margin: 20px auto;
+            animation: zoomIn 0.5s ease-out;
+        }
+
+        #preview.show {
+            display: block;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #742a2a;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #fc8181;
+            font-weight: 500;
+            text-align: center;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #9ae6b4;
+            font-weight: 500;
+            text-align: center;
+            display: none;
+        }
+
+        .icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+
+        .progress-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: 600;
+            color: #a0aec0;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step.completed {
+            background: #48bb78;
+            color: white;
+        }
+
+        .step-line {
+            width: 50px;
+            height: 2px;
+            background: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .step-line.completed {
+            background: #48bb78;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .video-section {
+                padding: 20px 15px;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="icon">👨‍🎓</span>Register New Student</h1>
+            <p class="subtitle">Complete the form below to add a new student to the system</p>
+        </div>
+
+        <div class="form-container">
+            <div class="progress-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step-line" id="line1"></div>
+                <div class="step" id="step2">2</div>
+                <div class="step-line" id="line2"></div>
+                <div class="step" id="step3">3</div>
+            </div>
+
+            {% if error %}
+            <div class="error">
+                <span class="icon">⚠️</span>{{ error|safe }}
+            </div>
+            {% endif %}
+
+
+            <div class="success-message" id="successMessage">
+                <span class="icon">✅</span>Face captured successfully!
+            </div>
+            {% if success %}
+            <div class="success-message" style="display: block;">
+                <span class="icon">✅</span>{{ success|safe }}
+            </div>
+            {% endif %}
+
+
+            <form method="POST" id="studentForm">
+                {% csrf_token %}
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name"><span class="icon">👤</span>Full Name</label>
+                        <input type="text" name="name" id="name" placeholder="Enter student's full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ag_number"><span class="icon">🆔</span>AG Number</label>
+                        <input type="text" name="ag_number" id="ag_number" placeholder="Enter AG number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="class_name"><span class="icon">🏫</span>Class Name</label>
+                        <input type="text" name="class_name" id="class_name" placeholder="Enter class name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="section"><span class="icon">📚</span>Section</label>
+                        <input type="text" name="section" id="section" placeholder="Enter section" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="courses"><span class="icon">📖</span>Courses</label>
+                        <input type="text" name="courses" id="courses" placeholder="Enter courses (comma-separated)"
+                            required>
+                    </div>
+                </div>
+
+                <div class="video-section" id="videoSection">
+                    <div class="video-title">
+                        <span class="icon">📸</span>Capture Student Face
+                    </div>
+                    <video id="video" autoplay></video>
+                    <br>
+                    <button type="button" class="capture-btn" onclick="captureImage()">
+                        <span class="icon">📷</span>Capture Face
+                    </button>
+                    <img id="preview" alt="Captured face preview">
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p style="color: #667eea;">Processing image...</p>
+                </div>
+
+                <input type="hidden" name="image" id="image-data">
+                <canvas id="canvas" style="display:none;"></canvas>
+
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>
+                    <span class="icon">✨</span>Register Student
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const imageData = document.getElementById('image-data');
+        const preview = document.getElementById('preview');
+        const videoSection = document.getElementById('videoSection');
+        const successMessage = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+
+        // Progress tracking
+        let currentStep = 1;
+        const steps = document.querySelectorAll('.step');
+        const lines = document.querySelectorAll('.step-line');
+
+        function updateProgress(step) {
+            steps.forEach((s, index) => {
+                if (index < step - 1) {
+                    s.classList.add('completed');
+                    s.classList.remove('active');
+                } else if (index === step - 1) {
+                    s.classList.add('active');
+                    s.classList.remove('completed');
+                } else {
+                    s.classList.remove('active', 'completed');
+                }
+            });
+
+            lines.forEach((line, index) => {
+                if (index < step - 1) {
+                    line.classList.add('completed');
+                } else {
+                    line.classList.remove('completed');
+                }
+            });
+        }
+
+        // Form validation
+        const formInputs = document.querySelectorAll('input[required]');
+        formInputs.forEach(input => {
+            input.addEventListener('input', checkFormCompletion);
+        });
+
+        function checkFormCompletion() {
+            const allFilled = Array.from(formInputs).every(input => input.value.trim() !== '');
+            if (allFilled && currentStep < 2) {
+                currentStep = 2;
+                updateProgress(currentStep);
+            }
+        }
+
+        // Start webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                videoSection.classList.add('active');
+            })
+            .catch(err => {
+                console.error("Webcam error:", err);
+                alert("Could not access webcam. Please check your camera permissions.");
+            });
+
+        function captureImage() {
+            loading.style.display = 'block';
+
+            setTimeout(() => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const dataUrl = canvas.toDataURL('image/jpeg');
+                imageData.value = dataUrl;
+                preview.src = dataUrl;
+                preview.classList.add('show');
+
+                loading.style.display = 'none';
+                successMessage.style.display = 'block';
+                submitBtn.disabled = false;
+
+                currentStep = 3;
+                updateProgress(currentStep);
+
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            }, 1000);
+        }
+
+        // Form submission enhancement
+        document.getElementById('studentForm').addEventListener('submit', function (e) {
+            if (!imageData.value) {
+                e.preventDefault();
+                alert('Please capture the student\'s face before submitting.');
+                return;
+            }
+
+            submitBtn.innerHTML = '<span class="icon">⏳</span>Registering...';
+            submitBtn.disabled = true;
+        });
+
+        // Initialize progress
+        updateProgress(currentStep);
+    </script>
+</body>
+
+</html>
